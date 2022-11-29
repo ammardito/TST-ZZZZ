@@ -1,70 +1,69 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 import json
 from flask_mysqldb import MySQL
+
 # Intitialise the app
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'testtst'
+app.config['MYSQL_DB'] = 'tubestst'
 mysql = MySQL(app)
-table = 'estimated_crimes_1979_2019'
-# print(data)
-
+table = 'house'
 
 # Define what the app does
-@app.route("/",methods=['GET','POST'])
-def index():
-    cur = mysql.connection.cursor()
-    if request.method == 'POST':
-        form = request.form
-        year = form['year']
-        if not year:
-            cur.execute(f'''select * from {table} limit 10''')
-            data = cur.fetchall()
-            return render_template('index.html',data = data)
-        cur.execute(f'select * from {table} where year = {year} limit 10')
-        data = cur.fetchall()
-        return render_template('index.html',data = data)
-    cur.execute(f'''select * from {table} limit 10''')
-    data = cur.fetchall()
-    return render_template('index.html',data = data)
 
-@app.route("/create",methods=['GET','POST'])
+# Tampilan data (Read)
+@app.route("/", methods=['GET','POST'])
+def nampilkan():
+    cur = mysql.connection.cursor()
+    if request.method == 'GET':
+        cur.execute(f'select * from {table} limit 10')
+        data = cur.fetchall()
+        return jsonify(data)
+
+# Menambahkan data (create)
+@app.route("/create", methods=['GET','POST'])
 def create():
     cur = mysql.connection.cursor()
     if request.method == 'POST':
-        form = request.form
-        year = form['year']
-        stateAbbr = form['state_abbr']
-        stateName = form['state_name']
-        query = f'insert into {table} (year,state_abbr,state_name) values ({year},"{stateAbbr}","{stateName}")'
-        cur.execute(query)
-        print(query)
+        status = 'for_sale'
+        price = '20,000'
+        full_address = 'SoekarnoHatta'
+        street = 'Dago'
+        city = 'Bandung'
+        state = 'Indonesia'
+        cur.execute(f'insert into {table} (status,price,full_address,street,city,state) values ("{status}","{price}","{full_address}","{street}","{city}","{state}")')
         mysql.connection.commit()
-        return 'success'
+        return 'New data of the house created'
 
-    return render_template('create.html')
-@app.route('/update',methods=['GET','POST','PUT'])
+# Mengubah data (update)
+@app.route('/update', methods=['GET','POST','PUT'])
 def update():
-    cur = mysql.connection.cursor()
     if request.method == 'PUT':
-        payload = request.get_json()
-        year = payload['year']
-        stateAbbr = payload['state_abbr']
-        stateName = payload['state_name']
-        query = f'update {table} set state_name = "{stateName}" where year = {year} and state_abbr ="{stateAbbr}"'
-        cur.execute(query)
-        print(query)
+        cur = mysql.connection.cursor()
+        status = 'sold'
+        full_address = 'SoekarnoHatta'
+        cur.execute(f'update {table} set status = "{status}" where full_address = "{full_address}"')
         mysql.connection.commit()
-    return render_template('update.html')
-@app.route('/delete',methods=['GET','POST','DELETE'])
+        return 'Data of the house updated'
+
+# Menghapus data (delete)
+@app.route('/delete', methods=['GET','POST','DELETE'])
 def delete():
-    cur = mysql.connection.cursor()
     if request.method == 'DELETE':
-        payload = request.get_json()
-        year = payload['year']
-        query = f'delete from {table} where year = {year}'
-        cur.execute(query)
+        cur = mysql.connection.cursor()
+        full_address = 'SoekarnoHatta'
+        cur.execute(f'delete from {table} where full_address = "{full_address}"')
         mysql.connection.commit()
-    return render_template('delete.html')
+        return 'Data of the house deleted'
+
+
+@app.route("/tes", methods=['GET','POST'])
+def bukti():
+    cur = mysql.connection.cursor()
+    if request.method == 'GET':
+        full_address = 'SoekarnoHatta'
+        cur.execute(f'select * from {table} where full_address = "{full_address}"')
+        data = cur.fetchall()
+        return jsonify(data)
