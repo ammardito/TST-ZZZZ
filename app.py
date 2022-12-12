@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template, make_response, url_for,redirect
 import json
+import random
 import jwt # Perlu install pip install PyJWT diawal
 import datetime
 from functools import wraps
@@ -108,6 +109,12 @@ def delete():
 @app.route('/email',methods=['GET'])
 def sendEmail():
     return render_template('email.html')
+
+def generateOTP():
+    finalOTP= ''
+    for i in range (4):
+        finalOTP = finalOTP + str(random.randint(0,9))
+    return finalOTP
 
 @app.route('/verify',methods=['GET','POST'])
 def verify():
