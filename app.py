@@ -120,10 +120,10 @@ def generateOTP():
 def verify():
     email = request.form['email']
     userData['emai'] = email
-    msg = Message('Confirm Email',sender='test@tes.com',recipients=[email])
+    msg = Message('Confirm Email Anda',sender='test@tes.com',recipients=[email])
     otp = generateOTP()
     userData['otp'] = otp
-    msg.body = f'Hello your OTP is: {otp}'
+    msg.body = f'Masukkan OTP berikut: {otp}'
     print(email)
     # print(userData['email'])
     print(otp)
@@ -136,6 +136,6 @@ def validate():
     if userData['otp'] == userOTP:
         token = jwt.encode({'user':userData['email'], 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.config['SECRET_KEY'])
         storage.append(token)
-        return 'OTP valid'
+        return jsonify('Anda sudah bisa mengelola database')
     else:
-        return 'OTP salah'
+        return jsonify('OTP invalid')
