@@ -113,12 +113,12 @@ def sendEmail():
 def verify():
     email = request.form['email']
     userData['emai'] = email
-    msg = Message('Confirm Email',sender='test@fuck.com',recipients=[email])
+    msg = Message('Confirm Email',sender='test@tes.com',recipients=[email])
     otp = generateOTP()
     userData['otp'] = otp
     msg.body = f'Hello your OTP is: {otp}'
     print(email)
-    # print(userData['emai'])
+    # print(userData['email'])
     print(otp)
     # mail.send(msg)
     return render_template('verify.html')
@@ -127,7 +127,7 @@ def verify():
 def validate():
     userOTP = request.form['otp']
     if userData['otp'] == userOTP:
-        token = jwt.encode({'user':userData['emai'], 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.config['SECRET_KEY'])
+        token = jwt.encode({'user':userData['email'], 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.config['SECRET_KEY'])
         storage.append(token)
         return 'OTP valid'
     else:
