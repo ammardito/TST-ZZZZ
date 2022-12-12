@@ -50,7 +50,7 @@ def login():
         if checkValidation(username,password):
             token = jwt.encode({'user':username, 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.config['SECRET_KEY'])
             storage.append(token)
-            return jsonify('tes',token=token)
+            return jsonify(token=token)
         else:
             return jsonify('Password atau username salah')
     return render_template('login.html')
