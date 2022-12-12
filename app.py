@@ -106,6 +106,7 @@ def delete():
         mysql.connection.commit()
     return render_template('delete.html')
 
+# https://stackoverflow.com/questions/72547853/unable-to-send-email-in-c-sharp-less-secure-app-access-not-longer-available/72553362#72553362
 @app.route('/email',methods=['GET'])
 def sendEmail():
     return render_template('email.html')
@@ -119,15 +120,15 @@ def generateOTP():
 @app.route('/verify',methods=['GET','POST'])
 def verify():
     email = request.form['email']
-    userData['emai'] = email
-    msg = Message('Confirm Email Anda',sender='test@tes.com',recipients=[email])
+    userData['email'] = email
+    msg = Message('Confirm Email Anda',sender='ammarditoshafaat2001@gmail.com',recipients=[email])
     otp = generateOTP()
     userData['otp'] = otp
     msg.body = f'Masukkan OTP berikut: {otp}'
     print(email)
     # print(userData['email'])
     print(otp)
-    # mail.send(msg)
+    mail.send(msg)
     return render_template('verify.html')
 
 @app.route('/validate',methods=['POST'])
