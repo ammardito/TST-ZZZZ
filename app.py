@@ -1,27 +1,29 @@
 from flask import Flask, jsonify, request, render_template, make_response, url_for,redirect
 import json
-import jwt # Perlu install pip3 install PyJWT diawal
+import jwt # Perlu install pip install PyJWT diawal
 import datetime
 from functools import wraps
 from flask_mysqldb import MySQL
 from user import *
+
 # Intitialise the app
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'testtst'
+app.config['MYSQL_DB'] = 'tubestst'
 mysql = MySQL(app)
-table = 'estimated_crimes_1979_2019'
+table = 'house'
 
-app.config['SECRET_KEY'] ='needbucin'
+app.config['SECRET_KEY'] ='tesautentikasi'
 storage = []
+
 # Token Required
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if len(storage) == 0:
-            return jsonify({'message':'Tokekn is missing'}),403
+            return jsonify({'message':'Token is missing'}),403
         try:
             data = jwt.decode(storage[0],app.config['SECRET_KEY'],algorithms=['HS256'])
         except:
@@ -37,68 +39,60 @@ def login():
         username = form['username']
         password = form['password']
         if checkValidation(username,password):
-            token = jwt.encode({'user':username, 'exp':datetime.datetime.utcnow()+datetime.timedelta(seconds=10)},app.config['SECRET_KEY'])
+            token = jwt.encode({'user':username, 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.config['SECRET_KEY'])
             storage.append(token)
-            return render_template('login.html',token=token)
+            return jsonify('tes',token=token)
         else:
-            return('Password atau username salah')
+            return jsonify('Password atau username salah')
     return render_template('login.html')
 
 # Define what the app does
-@app.route("/",methods=['GET','POST'])
-def index():
-    cur = mysql.connection.cursor()
-    if request.method == 'POST':
-        form = request.form
-        year = form['year']
-        if not year:
-            cur.execute(f'''select * from {table} limit 10''')
-            data = cur.fetchall()
-            return render_template('index.html',data = data)
-        cur.execute(f'select * from {table} where year = {year} limit 10')
-        data = cur.fetchall()
-        return render_template('index.html',data = data)
-    cur.execute(f'''select * from {table} limit 10''')
-    data = cur.fetchall()
-    print(f'storage: {storage}')
-    return render_template('index.html',data = data)
 
-@app.route("/create",methods=['GET','POST'])
+# Tampilan data (Read)
+@app.route("/", methods=['GET','POST'])
+def nampilkan():
+    cur = mysql.connection.cursor()
+    if request.method == 'GET':
+        cur.execute(f'select * from {table} limit 10')
+        data = cur.fetchall()
+        return jsonify(data)
+
+# Menambahkan data (create)
+@app.route("/create", methods=['GET','POST'])
 @token_required
 def create():
     cur = mysql.connection.cursor()
     if request.method == 'POST':
         form = request.form
-        year = form['year']
-        stateAbbr = form['state_abbr']
-        stateName = form['state_name']
-        query = f'insert into {table} (year,state_abbr,state_name) values ({year},"{stateAbbr}","{stateName}")'
-        cur.execute(query)
-        print(query)
+        status = form['status']
+        price = form['price']
+        full_address = form['full_address']
+        cur.execute(f'insert into {table} (status,price,full_address) values ("{status}","{price}","{full_address}"")')
         mysql.connection.commit()
-        return 'success'
-
+        return jsonify('New data of the house created')
     return render_template('create.html')
-@app.route('/update',methods=['GET','POST','PUT'])
+
+# Mengubah data (update)
+@app.route('/update', methods=['GET','POST','PUT'])
+@token_required
 def update():
     cur = mysql.connection.cursor()
     if request.method == 'PUT':
         payload = request.get_json()
-        year = payload['year']
-        stateAbbr = payload['state_abbr']
-        stateName = payload['state_name']
-        query = f'update {table} set state_name = "{stateName}" where year = {year} and state_abbr ="{stateAbbr}"'
-        cur.execute(query)
-        print(query)
+        status = payload['status']
+        full_address = payload['full_address']
+        cur.execute(f'update {table} set status = "{status}" where full_address = "{full_address}"')
         mysql.connection.commit()
     return render_template('update.html')
-@app.route('/delete',methods=['GET','POST','DELETE'])
+
+# Menghapus data (delete)
+@app.route('/delete', methods=['GET','POST','DELETE'])
+@token_required
 def delete():
     cur = mysql.connection.cursor()
     if request.method == 'DELETE':
         payload = request.get_json()
-        year = payload['year']
-        query = f'delete from {table} where year = {year}'
-        cur.execute(query)
+        full_address = payload['full_address']
+        cur.execute(f'delete from {table} where full_address = "{full_address}"')
         mysql.connection.commit()
     return render_template('delete.html')

@@ -1,9 +1,5 @@
 user = {
-    'aufa':'yepyepyep',
-    'rakha':'hedon',
-    'kafi':'player',
-    'dafeb':'dafap',
-    'dito':'meong'
+    'tes123':'masmu123'
 }
 
 def checkValidation(username,password):
