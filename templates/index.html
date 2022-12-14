@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>year</th>
+            <th>state_abbr</th>
+            <th>state_name</th>
+            <th>population</th>
+            <th>violent_crime</th>
+            <th>homicide</th>
+            <th>rape_legacy</th>
+            <th>rape_revised</th>
+            <th>robbery</th>
+            <th>aggravated_assault</th>
+            <th>property_crime</th>
+            <th>burglary</th>
+            <th>larceny</th>
+            <th>motor_vehicle_thef</th>
+            <th>caveats</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in data %}
+          <tr>
+            <td>{{ d[0] }}</td>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }}</td>
+            <td>{{ d[3] }}</td>
+            <td>{{ d[4] }}</td>
+            <td>{{ d[5] }}</td>
+            <td>{{ d[6] }}</td>
+            <td>{{ d[7] }}</td>
+            <td>{{ d[8] }}</td>
+            <td>{{ d[9] }}</td>
+            <td>{{ d[10] }}</td>
+            <td>{{ d[11] }}</td>
+            <td>{{ d[12] }}</td>
+            <td>{{ d[13] }}</td>
+            <td>{{ d[14] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="container-form">
+      <form method="POST">
+        <div class="container-input">
+          <label>Year:</label>
+          <input type="text" name="year" id="" />
+        </div>
+        <button>Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

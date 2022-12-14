@@ -1,0 +1,48 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 93vw;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+table{
+    border-collapse: collapse;
+    display: block;
+    height: 330px;
+    overflow-y: auto;
+    width: 100%;
+}
+th{
+    padding:12px 5px;
+    background-color: rgb(140, 176, 248);
+    position: sticky;
+    top: 0;
+    border: 1px solid black;
+}
+td {
+    border: 1px solid black;
+    padding: 8px;
+}
+tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+.container-form{
+    margin: 0 auto;
+    display: flex;
+    width: 93vw;
+    margin-top: 30px;
+}
+.container-input{
+    display: flex;
+    flex-direction: column;
+    row-gap: .5em;
+}
+.container-input label{
+    font-weight: bold;
+}

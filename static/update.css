@@ -1,0 +1,20 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 90vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container-input{
+    display: flex;
+    flex-direction: column;
+    row-gap: .5em;
+}
+.container-input label{
+    font-weight: bold;
+}
