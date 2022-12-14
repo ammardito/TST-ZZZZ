@@ -28,7 +28,11 @@ def landing():
 @app.route('/core-api',methods=['GET','POST'])
 # @token_required
 def coreAPI():
-
+    cur = mysql.connection.cursor()
+    cleanData = []
+    form = request.form
+    state = form['state']
+    city = form['city']
     return jsonify('Home Page API House Recommendation Considering Crime Rate')
 
 # Penyedia API untuk teman sekelompok dari saya Ammardito Shafaat (18220074)
