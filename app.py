@@ -17,8 +17,8 @@ app.config['MYSQL_DB'] = 'tubestst'
 
 mysql = MySQL(app)
 table = 'house'
-# Config for URL API & Localhost
 
+# Config for URL API & Localhost
 app.config['API'] ='http://34.101.40.1/'
 
 app.config.from_pyfile('config.cfg')
