@@ -53,7 +53,23 @@ def authorization_Admin(f):
         return f(*args,**kwargs)
     return decorated
 
-
+# Login
+@app.route('/login',methods=['GET','POST'])
+def login():
+    if 'user' in session:
+        return redirect('/')
+    if request.method == 'POST':
+        form = request.form
+        username = form['username']
+        password = form['password']
+        if checkValidation(username,password):
+            print('VALIDASI')
+            session['user'] = username
+            session['email'] = user[username]['email']
+            return redirect('/verify')
+        else:
+            return('Password atau username salah')
+    return render_template('login.html')
 
 # Homepage
 @app.get("/")
