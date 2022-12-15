@@ -74,7 +74,7 @@ def login():
 @app.route('/verify',methods=['GET','POST'])
 def verify():
     email = session['email']
-    msg = Message('Confirm Email Anda',sender='ammarditoshafaat2001@gmail.com',recipients=[email])
+    msg = Message('OTP untuk log in anda',sender='ammarditoshafaat2001@gmail.com',recipients=[email])
     otp = generateOTP()
     session['otp'] = otp
     msg.body = f'Masukkan OTP berikut: {otp}'
@@ -89,9 +89,9 @@ def validate():
     userOTP = request.form['otp']
     if session['otp'] == userOTP:
         username = session['user']
-        token = jwt.encode({'user':username,'role':user[username]['role'], 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=2)},app.config['SECRET_KEY'])
+        token = jwt.encode({'user':username,'role':user[username]['role'], 'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.config['SECRET_KEY'])
         session['token'] = token
-        return jsonify('Anda sudah bisa mengelola API')
+        return jsonify('Anda sudah bisa mengoperasikan API')
     else:
         return jsonify('OTP invalid')
 
@@ -159,7 +159,7 @@ def read():
             cur.execute(f'''select * from {table} limit 10''')
             data = cur.fetchall()
             return render_template('show.html',data = data)
-        cur.execute(f'select * from {table} where state = {state} limit 10')
+        cur.execute(f'''select * from {table} where state = '{state}' order by price limit 10''')
         data = cur.fetchall()
         return render_template('show.html',data = data)
     cur.execute(f'''select * from {table} limit 10''')
@@ -177,7 +177,7 @@ def create():
         status = form['status']
         price = form['price']
         full_address = form['full_address']
-        cur.execute(f'insert into {table} (status,price,full_address) values ("{status}","{price}","{full_address}"")')
+        cur.execute(f'insert into {table} (status,price,full_address) values ("{status}","{price}","{full_address}")')
         mysql.connection.commit()
         return jsonify('New data of the house created')
     return render_template('create.html')
@@ -192,7 +192,7 @@ def update():
         payload = request.get_json()
         status = payload['status']
         full_address = payload['full_address']
-        cur.execute(f'update {table} set status = "{status}" where full_address = "{full_address}"')
+        cur.execute(f'''update {table} set status = "{status}" where full_address = "{full_address}"''')
         mysql.connection.commit()
     return render_template('update.html')
 
@@ -208,3 +208,6 @@ def delete():
         cur.execute(f'delete from {table} where full_address = "{full_address}"')
         mysql.connection.commit()
     return render_template('delete.html')
+    
+if __name__ == "__main__":
+    app.run(debug=True)
