@@ -15,7 +15,7 @@ app.config['MYSQL_DB'] = 'tubestst'
 mysql = MySQL(app)
 table = 'house'
 
-app.config['SECRET_KEY'] ='needbucin'
+app.config['SECRET_KEY'] ='tesautentikasi'
 storage = []
 headerTable = ['status','price','bed','bath','acre_lot','full_address','street','city','state','zip_code','house_size','sold_date','crimeRate']
 # Define what the app does
