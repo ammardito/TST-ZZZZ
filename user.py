@@ -17,14 +17,12 @@ def checkValidation(username,password):
     try:
         pw = user[username]['password']
         if pw == password:
-            # currentUser['name'] = username
-            # currentUser['email'] = user[username]['email']
-            # currentUser['role'] = user[username]['role']
             return True
         else:
             return False
     except:
         return False
+
 def generateOTP():
     finalOTP= ''
     for i in range (4):
