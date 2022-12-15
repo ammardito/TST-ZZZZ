@@ -95,6 +95,13 @@ def validate():
     else:
         return jsonify('OTP invalid')
 
+# Log out
+@app.get('/logout')
+def test():
+    session.pop('user',None)
+    session.pop('token',None)
+    return('Session end')
+
 # Homepage
 @app.get("/")
 def landing():
