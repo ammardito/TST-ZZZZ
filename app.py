@@ -97,7 +97,7 @@ def validate():
 
 # Log out
 @app.get('/logout')
-def test():
+def logout():
     session.pop('user',None)
     session.pop('token',None)
     return('Session end')
