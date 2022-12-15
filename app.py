@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, request, render_template, make_response, url_for,redirect
+from flask import Flask, jsonify, request, render_template, make_response, url_for,redirect,session
 import json
 import jwt # Perlu install pip3 install PyJWT diawal
 import datetime
 import urllib.request, json
 from functools import wraps
 from flask_mysqldb import MySQL
+from flask_mail import Mail,Message #pip install Flask-Mail
+from user import *
 
 # Intitialise the app
 app = Flask(__name__)
@@ -12,13 +14,46 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'tubestst'
+
 mysql = MySQL(app)
 table = 'house'
+# Config for URL API & Localhost
+
+app.config['API'] ='http://34.101.40.1/'
+
+app.config.from_pyfile('config.cfg')
+mail = Mail(app)
 
 app.config['SECRET_KEY'] ='tesautentikasi'
 storage = []
 headerTable = ['status','price','bed','bath','acre_lot','full_address','street','city','state','zip_code','house_size','sold_date','crimeRate']
 # Define what the app does
+
+# Token Required
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'token' not in session:
+            return redirect('/login')
+        try:
+            data = jwt.decode(session['token'],app.config['SECRET_KEY'],algorithms=['HS256'])
+        except:
+            session.pop('token',None)
+            session.pop('user',None)
+            return jsonify({'message':'Token is invalid'}),403
+        return f(*args,**kwargs)
+    return decorated
+
+def authorization_Admin(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        data = jwt.decode(session['token'],app.config['SECRET_KEY'],algorithms=['HS256'])
+        if data['role'] != 'admin':
+            return ({'message':'you do not permission to access '})
+        return f(*args,**kwargs)
+    return decorated
+
+
 
 # Homepage
 @app.get("/")
@@ -29,14 +64,12 @@ def landing():
 @app.route('/core-api',methods=['GET','POST'])
 # @token_required
 def coreAPI():
-    url = 'http://34.101.40.1/data/crimesRate?sort=desc'
+    url = f"{app.config['API']}/data/crimesRate?sort=desc"
     response = urllib.request.urlopen(url)
     dataAPI = response.read()
     crimesRateData = json.loads(dataAPI)
     lenOfHeader = len(headerTable)
     cur = mysql.connection.cursor()
-    stateList = ['New York','New Jersey']
-    crimeRate = ['65','69']
     cleanData = ()
     # form = request.form
     # state = form['state']
